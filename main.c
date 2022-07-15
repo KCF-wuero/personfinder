@@ -5,7 +5,7 @@
 
 FILE * personen;
 FILE * output;
-//XML was here
+//
 int main(int argc,char * argv[]) {
 int zeile = 0;
 int snprintfreturn;
