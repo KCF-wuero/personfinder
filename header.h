@@ -26,4 +26,5 @@ struct Person{
 
 void tokensaver(char string[], int zeile);
 void onkelsuche(char searchval[] );
+void parentsfinder(int personpos,FILE * output);
 struct Person * readfile(FILE * personen, int * zeile);

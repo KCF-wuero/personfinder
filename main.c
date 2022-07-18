@@ -7,8 +7,11 @@ FILE * personen;
 FILE * output;
 //
 int main(int argc,char * argv[]) {
+
+char searchid[60];
 int zeile = 0;
 int snprintfreturn;
+int searchperspos;
 
     if((personen = fopen(argv[1],"r")) == NULL)
     {
@@ -25,6 +28,8 @@ int snprintfreturn;
     //TODO: optinal funktion die herausfindet in welcher reinfolge die eingabe steht (vornahme nachname gebdat)
     //TODO: auswahl welche art von verwanten man sucht
     struct Person * personlist = readfile(personen, &zeile);
+    searchperspos = personfinder()
+    parentsfinder()
 
 fclose(personen);
     for (int i = 0; i < zeile; i++) {
@@ -46,7 +51,7 @@ fclose(personen);
 
     }
     fclose(output);
-    free(persons);
+    free(personlist);
     return 0;
 }
 

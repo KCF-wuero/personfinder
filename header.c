@@ -93,7 +93,7 @@ void tokensaver(char satz[], int zeile)
 
 }
 
-void person finder(char searchval[])
+int personfinder(char searchval[])
 {
     int perspossave;
     int i = 0;
@@ -101,7 +101,22 @@ void person finder(char searchval[])
         i++;
     }
     perspossave = i;
+    return perspossave;
+}
 
-
-
+void parentsfinder(int personpos,FILE * output)
+{
+    char mutterid[60];
+    int mutterpos;
+    char faterid[60];
+    int faterpos;
+    strcat(faterid,persons[personpos].fatvornam);
+    strcat(faterid,persons[personpos].fatvornam);
+    strcat(faterid,persons[personpos].fatgebjahr);
+    faterpos = personfinder(faterid);
+    strcat(mutterid,persons[personpos].mutvornam);
+    strcat(mutterid,persons[personpos].mutzunam);
+    strcat(mutterid,persons[personpos].mutgebjahr);
+    mutterpos = personfinder(mutterid);
+    printf("die elter der person sind %s = pos: %d und %s = pos: %d",faterid,faterpos,mutterid,mutterpos);
 }
