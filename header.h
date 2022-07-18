@@ -26,8 +26,8 @@ struct Person{
     char mutgebjahr[5];
 };
 
-void tokensaver(char string[], int zeile);
-int personfinder(char searchval[]);
-void parentsfinder(int personpos,int * fatpos,int * mutpos);
-void kinderfinder(int fatpos,int mutpos,int maxzeilen,int personpos,int * kinderpos);
-struct Person * readfile(FILE * personen, int * zeile);
+void tokensaver(char satz[], int zeile, struct Person * persons);
+int personfinder(char searchval[60],struct Person * persons);
+void parentsfinder(int personpos,int * fatpos,int * mutpos,struct Person * persons);
+int kinderfinder(int fatpos,int mutpos,int maxzeilen,int personpos,int * kinderpos,struct Person * persons);
+void readfile(FILE * personen, int * zeile,struct Person * persons);

@@ -6,15 +6,20 @@
 FILE * personen;
 FILE * output;
 //
+
 int main(int argc,char * argv[]) {
 
 char searchid[60];
 int zeile = 0;
-int snprintfreturn;
+
 int searchperspos;
 int mutpos;
 int fatpos;
 int *kinderpos;
+int amountofkind;
+
+
+
 
     if((personen = fopen(argv[2],"r")) == NULL)
     {
@@ -34,7 +39,8 @@ int *kinderpos;
     strcat(searchid,argv[6]);
     //TODO: optinal funktion die herausfindet in welcher reinfolge die eingabe steht (vornahme nachname gebdat)
     //TODO: auswahl welche art von verwanten man sucht
-    struct Person * personlist = readfile(personen, &zeile);
+    struct Person * personlist = malloc(sizeof (struct Person)*MAX);
+    readfile(personen, &zeile,personlist);
 
 
 fclose(personen);
@@ -57,18 +63,18 @@ fclose(personen);
 
     }
 
-    searchperspos = personfinder(searchid);
-    parentsfinder(searchperspos,&fatpos,&mutpos);
+    searchperspos = personfinder(searchid,personlist);
+    parentsfinder(searchperspos,&fatpos,&mutpos,personlist);
 
     kinderpos = malloc(sizeof (int)*zeile);
-    kinderfinder(fatpos,mutpos,zeile,searchperspos,kinderpos);
+    amountofkind = kinderfinder(fatpos,mutpos,zeile,searchperspos,kinderpos,personlist);
     printf("Die gesuchte person ist %s\n",personlist[searchperspos].personid);
 
     printf("Die eltern der person sind %s = pos: %d und %s = pos: %d\n",
            personlist[searchperspos].fatid, fatpos, personlist[searchperspos].mutid, mutpos);
 
     printf("Die geschwister sind:\n");
-    for (int i = 0; i < sizeof(kinderpos)/sizeof(kinderpos[0]); ++i)
+    for (int i = 0; i < amountofkind; i++)
     {
 
         printf("%s\n",personlist[kinderpos[i]].personid);

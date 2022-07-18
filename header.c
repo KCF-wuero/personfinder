@@ -6,26 +6,26 @@
 #include <stdlib.h>
 
 #include "header.h"
-struct Person * persons;
 
-struct Person * readfile(FILE * personen, int * zeile)
+
+void readfile(FILE * personen, int * zeile,struct Person * persons)
 {
-    persons = malloc(sizeof (struct Person)*MAX);
+
     char satz[MAXSATZ];
 
     while(!feof(personen))
     {
         fgets(satz, MAXSATZ, personen);
 
-        tokensaver(satz, *zeile);
+        tokensaver(satz, *zeile, persons);
 
         (*zeile)++;
     }
 
-    return persons;
+
 }
 
-void tokensaver(char satz[], int zeile)
+void tokensaver(char satz[], int zeile, struct Person * persons)
 {
 
     char *wort;
@@ -103,7 +103,7 @@ void tokensaver(char satz[], int zeile)
 
 }
 
-int personfinder(char searchval[60])
+int personfinder(char searchval[60],struct Person * persons)
 {
     int perspossave;
     int i = 0;
@@ -114,19 +114,19 @@ int personfinder(char searchval[60])
     return perspossave;
 }
 
-void parentsfinder(int personpos,int * fatpos,int * mutpos)
+void parentsfinder(int personpos,int * fatpos,int * mutpos,struct Person * persons)
 {
 
 
 
-    *fatpos = personfinder(persons[personpos].fatid);
+    *fatpos = personfinder(persons[personpos].fatid,persons);
 
-    *mutpos = personfinder(persons[personpos].mutid);
+    *mutpos = personfinder(persons[personpos].mutid,persons);
 
 
 }
 
-void kinderfinder(int fatpos,int mutpos,int maxzeilen,int personpos,int * kinderpos)
+int kinderfinder(int fatpos,int mutpos,int maxzeilen,int personpos,int * kinderpos,struct Person * persons)
 {
     int i = 0;
     for (int j = 0; j < maxzeilen; ++j)
@@ -142,4 +142,5 @@ void kinderfinder(int fatpos,int mutpos,int maxzeilen,int personpos,int * kinder
 
 
     }
+    return i;
 }
