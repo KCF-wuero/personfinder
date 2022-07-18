@@ -46,5 +46,8 @@ fclose(personen);
 
     }
     fclose(output);
+    free(persons);
     return 0;
 }
+
+

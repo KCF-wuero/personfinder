@@ -92,3 +92,16 @@ void tokensaver(char satz[], int zeile)
     strcat(persons[zeile].personid, persons[zeile].gebjahr);
 
 }
+
+void person finder(char searchval[])
+{
+    int perspossave;
+    int i = 0;
+    while( 0 != strcmp(searchval,persons[i].personid)){
+        i++;
+    }
+    perspossave = i;
+
+
+
+}
