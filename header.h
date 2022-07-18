@@ -16,15 +16,18 @@ struct Person{
     char gesch[2];
     char gebjahr[5];
     char todjahr[5];
+    char fatid[60];
     char fatvornam[21];
     char fatzunam[21];
     char fatgebjahr[5];
+    char mutid[60];
     char mutvornam[21];
     char mutzunam[21];
     char mutgebjahr[5];
 };
 
 void tokensaver(char string[], int zeile);
-void onkelsuche(char searchval[] );
-void parentsfinder(int personpos,FILE * output);
+int personfinder(char searchval[]);
+void parentsfinder(int personpos,int * fatpos,int * mutpos);
+void kinderfinder(int fatpos,int mutpos,int maxzeilen,int personpos,int * kinderpos);
 struct Person * readfile(FILE * personen, int * zeile);

@@ -91,9 +91,19 @@ void tokensaver(char satz[], int zeile)
     strcat(persons[zeile].personid, persons[zeile].zuname);
     strcat(persons[zeile].personid, persons[zeile].gebjahr);
 
+    strcpy(persons[zeile].fatid, "") ;
+    strcat(persons[zeile].fatid, persons[zeile].fatvornam);
+    strcat(persons[zeile].fatid, persons[zeile].fatzunam);
+    strcat(persons[zeile].fatid, persons[zeile].fatgebjahr);
+
+    strcpy(persons[zeile].mutid, "") ;
+    strcat(persons[zeile].mutid, persons[zeile].mutvornam);
+    strcat(persons[zeile].mutid, persons[zeile].mutzunam);
+    strcat(persons[zeile].mutid, persons[zeile].mutgebjahr);
+
 }
 
-int personfinder(char searchval[])
+int personfinder(char searchval[60])
 {
     int perspossave;
     int i = 0;
@@ -104,19 +114,32 @@ int personfinder(char searchval[])
     return perspossave;
 }
 
-void parentsfinder(int personpos,FILE * output)
+void parentsfinder(int personpos,int * fatpos,int * mutpos)
 {
-    char mutterid[60];
-    int mutterpos;
-    char faterid[60];
-    int faterpos;
-    strcat(faterid,persons[personpos].fatvornam);
-    strcat(faterid,persons[personpos].fatvornam);
-    strcat(faterid,persons[personpos].fatgebjahr);
-    faterpos = personfinder(faterid);
-    strcat(mutterid,persons[personpos].mutvornam);
-    strcat(mutterid,persons[personpos].mutzunam);
-    strcat(mutterid,persons[personpos].mutgebjahr);
-    mutterpos = personfinder(mutterid);
-    printf("die elter der person sind %s = pos: %d und %s = pos: %d",faterid,faterpos,mutterid,mutterpos);
+
+
+
+    *fatpos = personfinder(persons[personpos].fatid);
+
+    *mutpos = personfinder(persons[personpos].mutid);
+
+
+}
+
+void kinderfinder(int fatpos,int mutpos,int maxzeilen,int personpos,int * kinderpos)
+{
+    int i = 0;
+    for (int j = 0; j < maxzeilen; ++j)
+    {
+        if(0 == strcmp(persons[fatpos].personid,persons[j].fatid)
+        && 0 == strcmp(persons[mutpos].personid,persons[j].mutid)
+        && 0 != strcmp(persons[personpos].personid,persons[j].personid))
+        {
+
+            kinderpos[i] = j;
+            i++;
+        }
+
+
+    }
 }
