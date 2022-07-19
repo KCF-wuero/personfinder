@@ -29,5 +29,5 @@ struct Person{
 void tokensaver(char satz[], int zeile, struct Person * persons);
 int personfinder(char searchval[60],struct Person * persons);
 void parentsfinder(int personpos,int * fatpos,int * mutpos,struct Person * persons);
-int kinderfinder(int fatpos,int mutpos,int maxzeilen,int personpos,int * kinderpos,struct Person * persons);
+int kinderfinder(int fatpos,int mutpos,int maxzeilen,int * kinderpos,struct Person * persons);
 void readfile(FILE * personen, int * zeile,struct Person * persons);

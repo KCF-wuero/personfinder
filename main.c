@@ -8,81 +8,150 @@ FILE * output;
 //
 
 int main(int argc,char * argv[]) {
+    int kindersaver = 0;
+    int eltern[2] = {9999, 9999};
+    int Geltern[4] = {9999, 9999, 9999, 9999};
+    int UGeltern[8] = {9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999};
+    char searchid[60];
+    int zeile = 0;
+    int counter = 0;
+    int searchperspos;
+    int mutpos;
+    int fatpos;
+    int *kinderpos;
+    int amountofkind;
+    int tant[30];
+    int onkel[30];
+    int onkcount = 0;
+    int tantcount = 0;
 
-char searchid[60];
-int zeile = 0;
 
-int searchperspos;
-int mutpos;
-int fatpos;
-int *kinderpos;
-int amountofkind;
-
-
-
-
-    if((personen = fopen(argv[2],"r")) == NULL)
-    {
+    if ((personen = fopen(argv[2], "r")) == NULL) {
         printf("fehler beim öfenen der ersten datai");
         return -1;
     }
 
-    if((output = fopen(argv[3],"w")) == NULL)
-    {
+    if ((output = fopen(argv[3], "w")) == NULL) {
         printf("fehler beim öfenen der zweiten datai");
         return -2;
     }
 
-    strcpy(searchid,"");
-    strcat(searchid,argv[4]);
-    strcat(searchid,argv[5]);
-    strcat(searchid,argv[6]);
-    //TODO: optinal funktion die herausfindet in welcher reinfolge die eingabe steht (vornahme nachname gebdat)
-    //TODO: auswahl welche art von verwanten man sucht
-    struct Person * personlist = malloc(sizeof (struct Person)*MAX);
-    readfile(personen, &zeile,personlist);
+    strcpy(searchid, "");
+    strcat(searchid, argv[4]);
+    strcat(searchid, argv[5]);
+    strcat(searchid, argv[6]);
 
 
-fclose(personen);
+    struct Person *personlist = malloc(sizeof(struct Person) * MAX);
+    readfile(personen, &zeile, personlist);
+
+
+    fclose(personen);
     for (int i = 0; i < zeile; i++) {
 
-        fprintf(output,"%s ", personlist[i].vorname);
-        fprintf(output,"%s ", personlist[i].zuname);
-        fprintf(output,"%s ", personlist[i].gesch);
-        fprintf(output,"%s ", personlist[i].gebjahr);
-        fprintf(output,"%s ", personlist[i].todjahr);
-        fprintf(output,"%s ", personlist[i].fatvornam);
-        fprintf(output,"%s ", personlist[i].fatzunam);
-        fprintf(output,"%s ", personlist[i].fatgebjahr);
-        fprintf(output,"%s ", personlist[i].mutvornam);
-        fprintf(output,"%s ", personlist[i].mutzunam);
-        fprintf(output,"%s", personlist[i].mutgebjahr);
-        if(i != zeile - 1 ) {
+        fprintf(output, "%s ", personlist[i].vorname);
+        fprintf(output, "%s ", personlist[i].zuname);
+        fprintf(output, "%s ", personlist[i].gesch);
+        fprintf(output, "%s ", personlist[i].gebjahr);
+        fprintf(output, "%s ", personlist[i].todjahr);
+        fprintf(output, "%s ", personlist[i].fatvornam);
+        fprintf(output, "%s ", personlist[i].fatzunam);
+        fprintf(output, "%s ", personlist[i].fatgebjahr);
+        fprintf(output, "%s ", personlist[i].mutvornam);
+        fprintf(output, "%s ", personlist[i].mutzunam);
+        fprintf(output, "%s", personlist[i].mutgebjahr);
+        if (i != zeile - 1) {
             fprintf(output, "\n");
         }
 
     }
+    searchperspos = personfinder(searchid, personlist);
+    parentsfinder(searchperspos, &fatpos, &mutpos, personlist);
 
-    searchperspos = personfinder(searchid,personlist);
-    parentsfinder(searchperspos,&fatpos,&mutpos,personlist);
+    eltern[0] = fatpos;
+    eltern[1] = mutpos;
 
-    kinderpos = malloc(sizeof (int)*zeile);
-    amountofkind = kinderfinder(fatpos,mutpos,zeile,searchperspos,kinderpos,personlist);
-    printf("Die gesuchte person ist %s\n",personlist[searchperspos].personid);
+    for (int i = 0; i < 2; i++) {
+        parentsfinder(eltern[i], &fatpos, &mutpos, personlist);
+
+        Geltern[counter] = fatpos;
+        Geltern[counter + 1] = mutpos;
+        counter += 2;
+    }
+    counter = 0;
+    for (int i = 0; i < 4; i++) {
+
+        if (9999 != Geltern[i]) {
+            parentsfinder(Geltern[i], &fatpos, &mutpos, personlist);
+            UGeltern[counter] = fatpos;
+            UGeltern[counter + 1] = mutpos;
+            counter += 2;
+
+        }
+    }
+
+
+    kinderpos = malloc(sizeof(int) * zeile);
+    counter = 0;
+    for (int i = 0; i < 4; i++) {
+
+        amountofkind = kinderfinder(UGeltern[counter], UGeltern[counter + 1], zeile, kinderpos, personlist);
+        kindersaver += amountofkind;
+        counter += 2;
+    }
+
+    printf("Die gesuchte person ist %s\n", personlist[searchperspos].personid);
 
     printf("Die eltern der person sind %s = pos: %d und %s = pos: %d\n",
-           personlist[searchperspos].fatid, fatpos, personlist[searchperspos].mutid, mutpos);
+           personlist[eltern[0]].personid, eltern[0], personlist[eltern[1]].personid, eltern[1]);
 
-    printf("Die geschwister sind:\n");
-    for (int i = 0; i < amountofkind; i++)
-    {
 
-        printf("%s\n",personlist[kinderpos[i]].personid);
+    for (int i = 0; i < kindersaver; ++i) {
+        int onkutant[60];
+
+            onkutant[i] = kinderpos[i];
+
+            if (0 == strcmp(personlist[onkutant[i]].gesch, "m")) {
+                for (int j = 0; j < 4; ++j) {
+                   if(onkutant[i] == Geltern[j])
+                   {
+                       goto a;
+                   }
+                }
+                onkel[onkcount] = onkutant[i];
+                onkcount++;
+            } else {
+                for (int j = 0; j < 4; ++j) {
+                if(onkutant[i] == Geltern[j])
+                {
+                    goto a;
+                }
+            }
+                tant[tantcount] = onkutant[i];
+                tantcount++;
+            }
+
+        a: ;
     }
-    fclose(output);
-    free(kinderpos);
-    free(personlist);
-    return 0;
-}
+    if (0 == strcmp(argv[7], "tanten")) {
+        printf("Die Grossonkel der person sind:\n");
+        for (int i = 0; i < tantcount; i++) {
+            printf("%s\n", personlist[tant[i]].personid);
+        }
+    }
+    else {
+
+        printf("Die Grossonkel der person sind:\n");
+        for (int i = 0; i < onkcount; i++) {
+
+            printf("%s\n", personlist[onkel[i]].personid);
+        }
+    }
+        fclose(output);
+        free(kinderpos);
+        free(personlist);
+        return 0;
+    }
+
 
 

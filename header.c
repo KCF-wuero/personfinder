@@ -3,7 +3,7 @@
 //
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
+
 
 #include "header.h"
 
@@ -107,6 +107,10 @@ int personfinder(char searchval[60],struct Person * persons)
 {
     int perspossave;
     int i = 0;
+    if(0 == strcmp("--0",searchval))
+    {
+        return 9999;
+    }
     while( 0 != strcmp(searchval,persons[i].personid)){
         i++;
     }
@@ -117,7 +121,10 @@ int personfinder(char searchval[60],struct Person * persons)
 void parentsfinder(int personpos,int * fatpos,int * mutpos,struct Person * persons)
 {
 
-
+    if(personpos >= (9999) )
+    {
+    return;
+    }
 
     *fatpos = personfinder(persons[personpos].fatid,persons);
 
@@ -126,21 +133,24 @@ void parentsfinder(int personpos,int * fatpos,int * mutpos,struct Person * perso
 
 }
 
-int kinderfinder(int fatpos,int mutpos,int maxzeilen,int personpos,int * kinderpos,struct Person * persons)
+int kinderfinder(int fatpos,int mutpos,int maxzeilen,int * kinderpos,struct Person * persons)
 {
     int i = 0;
-    for (int j = 0; j < maxzeilen; ++j)
-    {
-        if(0 == strcmp(persons[fatpos].personid,persons[j].fatid)
-        && 0 == strcmp(persons[mutpos].personid,persons[j].mutid)
-        && 0 != strcmp(persons[personpos].personid,persons[j].personid))
-        {
 
-            kinderpos[i] = j;
-            i++;
+    for (int j = 0; j < maxzeilen; j++) {
+        if (9999 == fatpos || 9999 == mutpos) {
+
+
+        } else {
+            if (0 == strcmp(persons[fatpos].personid, persons[j].fatid)
+                && 0 == strcmp(persons[mutpos].personid, persons[j].mutid)
+                    ) {
+
+                kinderpos[i] = j;
+                i++;
+            }
         }
-
-
     }
-    return i;
-}
+
+        return i;
+    }
