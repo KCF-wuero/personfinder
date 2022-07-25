@@ -2,16 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include "header.h"
+#include <stdbool.h>
 
-FILE * personen;
-FILE * output;
+FILE *personen;
+FILE *output;
+
 //
+void onkelundtantenfinder(int kindersaver, int kinderpos[], int geltern[], int *tant[], int *onkel[],
+                          struct Person *personlist, int *onkcount, int *tantcount);
 
-int main(int argc,char * argv[]) {
+int main(int argc, char *argv[]) {
     int kindersaver = 0;
-    int eltern[2] = {9999, 9999};
-    int Geltern[4] = {9999, 9999, 9999, 9999};
-    int UGeltern[8] = {9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999};
+    int eltern[] = {9999, 9999};
+    int geltern[] = {9999, 9999, 9999, 9999};
+    int ugeltern[] = {9999, 9999, 9999, 9999, 9999, 9999, 9999, 9999};
     char searchid[60];
     int zeile = 0;
     int counter = 0;
@@ -20,8 +24,8 @@ int main(int argc,char * argv[]) {
     int fatpos;
     int *kinderpos;
     int amountofkind;
-    int tant[30];
-    int onkel[30];
+    int *tant;
+    int *onkel;
     int onkcount = 0;
     int tantcount = 0;
 
@@ -74,17 +78,17 @@ int main(int argc,char * argv[]) {
     for (int i = 0; i < 2; i++) {
         parentsfinder(eltern[i], &fatpos, &mutpos, personlist);
 
-        Geltern[counter] = fatpos;
-        Geltern[counter + 1] = mutpos;
+        geltern[counter] = fatpos;
+        geltern[counter + 1] = mutpos;
         counter += 2;
     }
     counter = 0;
     for (int i = 0; i < 4; i++) {
 
-        if (9999 != Geltern[i]) {
-            parentsfinder(Geltern[i], &fatpos, &mutpos, personlist);
-            UGeltern[counter] = fatpos;
-            UGeltern[counter + 1] = mutpos;
+        if (9999 != geltern[i]) {
+            parentsfinder(geltern[i], &fatpos, &mutpos, personlist);
+            ugeltern[counter] = fatpos;
+            ugeltern[counter + 1] = mutpos;
             counter += 2;
 
         }
@@ -95,10 +99,14 @@ int main(int argc,char * argv[]) {
     counter = 0;
     for (int i = 0; i < 4; i++) {
 
-        amountofkind = kinderfinder(UGeltern[counter], UGeltern[counter + 1], zeile, kinderpos, personlist);
+        amountofkind = kinderfinder(ugeltern[counter], ugeltern[counter + 1], zeile, kinderpos, personlist);
         kindersaver += amountofkind;
         counter += 2;
     }
+    tant = malloc(sizeof(int) * 30);
+    onkel = malloc(sizeof(int) * 30);
+    onkelundtantenfinder(kindersaver, kinderpos, geltern, tant, onkel, personlist,
+                         &onkcount, &tantcount);
 
     printf("Die gesuchte person ist %s\n", personlist[searchperspos].personid);
 
@@ -106,40 +114,12 @@ int main(int argc,char * argv[]) {
            personlist[eltern[0]].personid, eltern[0], personlist[eltern[1]].personid, eltern[1]);
 
 
-    for (int i = 0; i < kindersaver; ++i) {
-        int onkutant[60];
-
-            onkutant[i] = kinderpos[i];
-
-            if (0 == strcmp(personlist[onkutant[i]].gesch, "m")) {
-                for (int j = 0; j < 4; ++j) {
-                   if(onkutant[i] == Geltern[j])
-                   {
-                       goto a;
-                   }
-                }
-                onkel[onkcount] = onkutant[i];
-                onkcount++;
-            } else {
-                for (int j = 0; j < 4; ++j) {
-                if(onkutant[i] == Geltern[j])
-                {
-                    goto a;
-                }
-            }
-                tant[tantcount] = onkutant[i];
-                tantcount++;
-            }
-
-        a: ;
-    }
     if (0 == strcmp(argv[7], "tanten")) {
         printf("Die Grossonkel der person sind:\n");
         for (int i = 0; i < tantcount; i++) {
             printf("%s\n", personlist[tant[i]].personid);
         }
-    }
-    else {
+    } else {
 
         printf("Die Grossonkel der person sind:\n");
         for (int i = 0; i < onkcount; i++) {
@@ -147,11 +127,40 @@ int main(int argc,char * argv[]) {
             printf("%s\n", personlist[onkel[i]].personid);
         }
     }
-        fclose(output);
-        free(kinderpos);
-        free(personlist);
-        return 0;
+    fclose(output);
+    free(kinderpos);
+    free(personlist);
+    return 0;
+}
+
+
+void onkelundtantenfinder(int kindersaver, int kinderpos[], int geltern[], int *tant[], int *onkel[],
+                          struct Person *personlist, int *onkcount, int *tantcount) {
+    bool istgelternteil = false;
+    for (int i = 0; i < kindersaver; i++) {
+
+        for (int j = 0; j < 4; j++) {
+            if (kinderpos[i] == geltern[j]) {
+                istgelternteil = true;
+                break;
+            }
+        }
+        if (!istgelternteil) {
+
+            if (0 == strcmp(personlist[kinderpos[i]].gesch, "m")) {
+
+                onkel[*onkcount] = kinderpos[i];
+                *onkcount++;
+            } else {
+
+                tant[*tantcount] = kinderpos[i];
+                *tantcount++;
+            }
+        }
+
+
     }
 
 
 
+}
